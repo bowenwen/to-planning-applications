@@ -1,0 +1,6 @@
+throw 'allowScriptTagRemoting is false.';
+//#DWR-INSERT
+//#DWR-REPLY
+var s0={};var s1={};s0.communityInfo=null;s0.detailLink="17\u00A0268352\u00A0S45\u00A033\u00A0TLAB";s0.folderDescription="To permit an increase to the proposed number of units and a reduction in the number of resident parking spaces.";s0.folderRevision="33";s0.folderRsn=4287813;s0.folderSection="S45";s0.folderSequence="268352";s0.folderType="TLAB";s0.folderTypeDesc="Toronto Local Appeal Body";s0.folderTypeList="Toronto Local Appeal Body";s0.folderYear="17";s0.geoID="14072524";s0.inDate="Nov 28, 2017";s0.location="2135 SHEPPARD AVE E";s0.mainProperty=null;s0.maxOutcome=null;s0.maxStage=null;s0.plannerInfo=null;s0.propX=318304.681;s0.propY=4848092.19;s0.propertyView=s1;s0.proposal=null;s0.referenceFile="17-268352";s0.statutoryInfo=null;s0.subType=null;
+s1.address=null;s1.city="TORONTO";s1.folders=null;s1.house="2135";s1.legalDesc="PLAN 7612 BLK A CON 4 EY PT LOT 15";s1.planningDistrict="North York";s1.planningWard="33";s1.postal="M2J 1W6";s1.propertyRoll="1908111210008000000";s1.propertyRsn=431002;s1.province="ON";s1.region="N3306";s1.street="SHEPPARD";s1.streetDirection="E";s1.streetType="AVE";s1.wardDesc="Ward 33: Don Valley East";
+dwr.engine._remoteHandleCallback('0','0',[s0]);

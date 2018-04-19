@@ -1,0 +1,6 @@
+throw 'allowScriptTagRemoting is false.';
+//#DWR-INSERT
+//#DWR-REPLY
+var s0={};var s1={};s0.communityInfo=null;s0.detailLink="18\u00A0141276\u00A0S45\u00A041\u00A0TLAB";s0.folderDescription="Proposed front porch and entrance addition and second storey addition to the existing house.";s0.folderRevision="41";s0.folderRsn=4351307;s0.folderSection="S45";s0.folderSequence="141276";s0.folderType="TLAB";s0.folderTypeDesc="Toronto Local Appeal Body";s0.folderTypeList="Toronto Local Appeal Body";s0.folderYear="18";s0.geoID="359809";s0.inDate="Apr 10, 2018";s0.location="54 MARESFIELD DR";s0.mainProperty=null;s0.maxOutcome=null;s0.maxStage=null;s0.plannerInfo=null;s0.propX=323531.387;s0.propY=4853127.821;s0.propertyView=s1;s0.proposal=null;s0.referenceFile="18-141276";s0.statutoryInfo=null;s0.subType=null;
+s1.address=null;s1.city="TORONTO";s1.folders=null;s1.house="54";s1.legalDesc="PLAN M2049 LOT 36";s1.planningDistrict="Scarborough";s1.planningWard="41";s1.postal="M1V 2X1";s1.propertyRoll="1901124602027000000";s1.propertyRsn=128187;s1.province="ON";s1.region="E4103";s1.street="MARESFIELD";s1.streetDirection="";s1.streetType="DR";s1.wardDesc="Ward 41: Scarborough-Rouge River";
+dwr.engine._remoteHandleCallback('0','0',[s0]);

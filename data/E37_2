@@ -1,0 +1,6 @@
+throw 'allowScriptTagRemoting is false.';
+//#DWR-INSERT
+//#DWR-REPLY
+var s0={};var s1={};s0.communityInfo=null;s0.detailLink="17\u00A0238413\u00A0S45\u00A037\u00A0TLAB";s0.folderDescription="To construct a new two-storey detached dwelling.";s0.folderRevision="37";s0.folderRsn=4252404;s0.folderSection="S45";s0.folderSequence="238413";s0.folderType="TLAB";s0.folderTypeDesc="Toronto Local Appeal Body";s0.folderTypeList="Toronto Local Appeal Body";s0.folderYear="17";s0.geoID="347580";s0.inDate="Sep 25, 2017";s0.location="63 INNISWOOD DR";s0.mainProperty=null;s0.maxOutcome=null;s0.maxStage=null;s0.plannerInfo=null;s0.propX=320489.205;s0.propY=4844064.722;s0.propertyView=s1;s0.proposal=null;s0.referenceFile="17-238413";s0.statutoryInfo=null;s0.subType=null;
+s1.address=null;s1.city="TORONTO";s1.folders=null;s1.house="63";s1.legalDesc="PLAN 4219 LOT 52";s1.planningDistrict="Scarborough";s1.planningWard="37";s1.postal="M1R 1E8";s1.propertyRoll="1901031280010000000";s1.propertyRsn=15151;s1.province="ON";s1.region="E3706";s1.street="INNISWOOD";s1.streetDirection="";s1.streetType="DR";s1.wardDesc="Ward 37: Scarborough Centre";
+dwr.engine._remoteHandleCallback('0','0',[s0]);

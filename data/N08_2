@@ -1,0 +1,6 @@
+throw 'allowScriptTagRemoting is false.';
+//#DWR-INSERT
+//#DWR-REPLY
+var s0={};var s1={};s0.communityInfo=null;s0.detailLink="18\u00A0132160\u00A0S45\u00A008\u00A0TLAB";s0.folderDescription="To permit a Vehicle Dealership.";s0.folderRevision="08";s0.folderRsn=4340640;s0.folderSection="S45";s0.folderSequence="132160";s0.folderType="TLAB";s0.folderTypeDesc="Toronto Local Appeal Body";s0.folderTypeList="Toronto Local Appeal Body";s0.folderYear="18";s0.geoID="7576552";s0.inDate="Mar 21, 2018";s0.location="155 CHAMPAGNE DR";s0.mainProperty=null;s0.maxOutcome=null;s0.maxStage=null;s0.plannerInfo=null;s0.propX=307225.549;s0.propY=4847049.348;s0.propertyView=s1;s0.proposal=null;s0.referenceFile="18-132160";s0.statutoryInfo=null;s0.subType=null;
+s1.address=null;s1.city="TORONTO";s1.folders=null;s1.house="155";s1.legalDesc="PLAN 7178 PT BLK D PT BLK L RP 64R7782 PART 2";s1.planningDistrict="North York";s1.planningWard="08";s1.postal="M3J 2C6";s1.propertyRoll="1908033415018910000";s1.propertyRsn=361234;s1.province="ON";s1.region="N0807";s1.street="CHAMPAGNE";s1.streetDirection="";s1.streetType="DR";s1.wardDesc="Ward 8: York West";
+dwr.engine._remoteHandleCallback('0','0',[s0]);

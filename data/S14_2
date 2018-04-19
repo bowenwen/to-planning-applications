@@ -1,0 +1,6 @@
+throw 'allowScriptTagRemoting is false.';
+//#DWR-INSERT
+//#DWR-REPLY
+var s0={};var s1={};s0.communityInfo=null;s0.detailLink="17\u00A0260813\u00A0S45\u00A014\u00A0TLAB";s0.folderDescription="To construct a new three-storey detached fourplex with a rear detached garage. ";s0.folderRevision="14";s0.folderRsn=4278917;s0.folderSection="S45";s0.folderSequence="260813";s0.folderType="TLAB";s0.folderTypeDesc="Toronto Local Appeal Body";s0.folderTypeList="Toronto Local Appeal Body";s0.folderYear="17";s0.geoID="11774673";s0.inDate="Nov 10, 2017";s0.location="491 PARKSIDE DR";s0.mainProperty=null;s0.maxOutcome=null;s0.maxStage=null;s0.plannerInfo=null;s0.propX=308094.701;s0.propY=4834598.281;s0.propertyView=s1;s0.proposal=null;s0.referenceFile="17-260813";s0.statutoryInfo=null;s0.subType=null;
+s1.address=null;s1.city="TORONTO";s1.folders=null;s1.house="491";s1.legalDesc="PLAN 1226 PT LOTS 63 & 64 WITH ROW";s1.planningDistrict="Tor & E.York";s1.planningWard="14";s1.postal="M6R 2Z9";s1.propertyRoll="1904022450008000000";s1.propertyRsn=157965;s1.province="ON";s1.region="S1402";s1.street="PARKSIDE";s1.streetDirection="";s1.streetType="DR";s1.wardDesc="Ward 14: Parkdale-High Park";
+dwr.engine._remoteHandleCallback('0','0',[s0]);
