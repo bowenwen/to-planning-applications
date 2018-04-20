@@ -1,32 +1,38 @@
+# system
 import re
 import os
-import dbcfg
-import MySQLdb
 import sys
 import traceback
-
-# postgresql and spatial packages
-import psycopg2
-import ppygis  # Point
-import pyproj  # Proj, transform
-
-# postal code location processing
-import pypostalcode # PostalCodeDatabase
-import geopy #from geopy.geocoders import Nominatim
-
 import time
 import json
 
+# databases
+import dbcfg  # credentials
+import MySQLdb
+import psycopg2
+
+# spatial data
+import ppygis  # Point
+import pyproj  # Proj, transform
+import geopy  #from geopy.geocoders import Nominatim
+
+# globals
 TABLENAME = "to_planning_app"  #"parse"
 DATA_DIR = 'data'
 DATA_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), DATA_DIR)
 FILENAME_LOG_FILE = 'message.log'
 FILENAME_LOG_INVALID_DATAROWS = 'bad_rows.log'
+FILENAME_LOG_RAW_DATAROWS = 'raw_rows.log'
 DATA_LOG_INVALID_DATAROWS = ''
+DATA_LOG_RAW_DATAROWS = ''
+ALL_COUNT = 0
+DUPLICATE_COUNT = 0
+BAD_COUNT = 0
 
 #####################
 # UTILITY FUNCTIONS #
 #####################
+
 
 # geopy geocoder
 def do_geocode(address):
@@ -228,8 +234,13 @@ def pgsql_connect():
 
 
 def pgsql_add_row(cursor, tablename, rowdict, includegeom):
-    
+
     global DATA_LOG_INVALID_DATAROWS
+    global DATA_LOG_RAW_DATAROWS
+    global BAD_COUNT
+
+    rowstring = json.dumps(rowdict)
+    DATA_LOG_RAW_DATAROWS = DATA_LOG_RAW_DATAROWS + rowstring + '\n'
 
     keys = ", ".join(rowdict.keys())
     values_template = ", ".join(["%s"] * len(rowdict))
@@ -244,8 +255,8 @@ def pgsql_add_row(cursor, tablename, rowdict, includegeom):
         # prevent reference error, check if keys exist, if not, create None entries
         if not 'propX' in rowdict.keys():
             rowdict['propX'] = None
-        if not 'propY' in rowdict.keys():   
-            rowdict['propY'] = None         
+        if not 'propY' in rowdict.keys():
+            rowdict['propY'] = None
         if not 'location' in rowdict.keys():
             rowdict['location'] = None
         if not 'propertyView_postal' in rowdict.keys():
@@ -253,40 +264,38 @@ def pgsql_add_row(cursor, tablename, rowdict, includegeom):
         if not 'propertyView_city' in rowdict.keys():
             rowdict['propertyView_city'] = None
         if not 'propertyView_province' in rowdict.keys():
-            rowdict['propertyView_province'] = 'ON' # assume this for this dataset
-            
-        # if contains proX and proY, use that to build geom
-        # elif contains address, use that to estimate geom (more accurate but slower, with sleep to prevent IP block)
-        # elif contains postal code, use that to estimate geom (less accurate but faster)
-        # else there isn't enough geographical information, exclude this row
-        if rowdict['propX'] is not None and rowdict['propY'] is not None:            
-            inProj = pyproj.Proj(
-                init='epsg:2019'
-            )  #SRID_MTM3 for city of toronto # http://spatialreference.org/ref/epsg/2019/
-            outProj = pyproj.Proj(init='epsg:4326')  #SRID_WGS84
+            rowdict['propertyView_province'] = 'ON'
+
+        if rowdict['propX'] is not None and rowdict['propY'] is not None:
+            # if contains proX and proY, use that to build geom
+            # IN: SRID_MTM3 for city of toronto # http://spatialreference.org/ref/epsg/2019/
+            inProj = pyproj.Proj(init='epsg:2019')
+            # OUT: SRID_WGS84
+            outProj = pyproj.Proj(init='epsg:4326')
             x1, y1 = rowdict['propX'], rowdict['propY']
             x2, y2 = pyproj.transform(inProj, outProj, x1, y1)
         elif rowdict['location'] is not None:
-            address = "%s, %s, %s" % (rowdict['location'], rowdict['propertyView_city'], rowdict['propertyView_province'])
-            location = do_geocode(address) # recursive retry method to get address
+            # elif contains address, use that to estimate geom (more accurate but slower, with sleep to prevent IP block)
+            address = "%s, %s, %s" % (rowdict['location'],
+                                      rowdict['propertyView_city'],
+                                      rowdict['propertyView_province'])
+            location = do_geocode(
+                address)  # recursive retry method to get address
             if location is not None:
-                x2, y2 = (location.longitude, location.latitude) # https://postgis.net/2013/08/18/tip_lon_lat/
+                x2, y2 = (location.longitude, location.latitude
+                          )  # https://postgis.net/2013/08/18/tip_lon_lat/
             else:
                 badrowstring = json.dumps(rowdict)
                 DATA_LOG_INVALID_DATAROWS = DATA_LOG_INVALID_DATAROWS + badrowstring + '\n'
-                return # continue to next row
-            time.sleep(5) #sleep to prevent server block
-        elif rowdict['propertyView_postal'] is not None:
-            # Compute x2, y2 from postal code instead
-            # https://github.com/inkjet/pypostalcode
-            pcdb = pypostalcode.PostalCodeDatabase()
-            pc = rowdict['propertyView_postal']#postal
-            location = pcdb[pc]
-            x2, y2 = (location.longitude,location.latitude)
+                BAD_COUNT += 1
+                return  # continue to next row
+            time.sleep(5)  #sleep to prevent server block
         else:
+            # else there isn't enough geographical information, exclude this row
             badrowstring = json.dumps(rowdict)
             DATA_LOG_INVALID_DATAROWS = DATA_LOG_INVALID_DATAROWS + badrowstring + '\n'
-            return # continue to next row
+            BAD_COUNT += 1
+            return  # continue to next row
 
         # insert into database
         coordinate = ppygis.Point(x2, y2)  # longitude, latitude
@@ -295,13 +304,17 @@ def pgsql_add_row(cursor, tablename, rowdict, includegeom):
         try:
             cursor.execute(sql, values_withgeom)
         except psycopg2.DataError as de1:
-            a=1
+            badrowstring = json.dumps(rowdict)
+            DATA_LOG_INVALID_DATAROWS = DATA_LOG_INVALID_DATAROWS + badrowstring + '\n'
+            BAD_COUNT += 1
+            return  # continue to next row
 
     else:
         sql = ('INSERT INTO %s (%s) VALUES (%s) ') % (tablename, keys,
                                                       values_template)
         values = tuple(rowdict[key] for key in rowdict)
         cursor.execute(sql, values)
+
 
 ##################
 # DATA CLEANSING #
@@ -341,8 +354,9 @@ def run(db_typ='postgres', include_geom=True):
     cursor = db.cursor()
     tablename = TABLENAME
 
-    new_count = 0
-    duplicate_count = 0
+    global ALL_COUNT
+    global DUPLICATE_COUNT
+    global BAD_COUNT
 
     print('inserting into db...')
     for ward_object in all_objects:
@@ -350,21 +364,20 @@ def run(db_typ='postgres', include_geom=True):
             row = ward_object[development]
             row = {k: null_empty_str_to_none(v) for k, v in row.iteritems()}
             row = {k: try_int_conversion(k, v) for k, v in row.iteritems()}
-            new_count+=1
+            ALL_COUNT += 1
             if db_typ == 'postgres':
                 try:
                     pgsql_add_row(cursor, tablename, row, include_geom)
+                    db.commit()
                 except psycopg2.IntegrityError:
                     #print("duplicate value.")#(e1.message)
-                    new_count-=1
-                    duplicate_count+=1
+                    DUPLICATE_COUNT += 1
                     db.rollback()
             else:
                 try:
                     mysql_add_row(cursor, tablename, row)
                 #except MySQLdb.IntegrityError:
-                    # new_count-=1
-                    # duplicate_count+=1
+                # DUPLICATE_COUNT+=1
                 except:
                     e = sys.exc_info()[0]
                     print e
@@ -372,22 +385,28 @@ def run(db_typ='postgres', include_geom=True):
                     print row
                     sys.exit(0)
 
-    print("Summary:\nDuplicate Records: %s\nNew Records: %s" % (str(duplicate_count),str(new_count)))
+    print("=== Summary ===\nDuplicate Records: %s\nBad Records: %s\nNew Records: %s" %
+          (str(DUPLICATE_COUNT), str(BAD_COUNT), str(ALL_COUNT - BAD_COUNT - DUPLICATE_COUNT)))
     db.commit()
 
 
 if __name__ == "__main__":
     import sys
     old_stdout = sys.stdout
-    log_file = open(FILENAME_LOG_FILE,"w")
-    sys.stdout = log_file # logging to file starts here, with print
+    log_file = open(FILENAME_LOG_FILE, "w")
+    sys.stdout = log_file  # logging to file starts here, with print
 
     # run statement
     run(db_typ='postgres', include_geom=True)
-    # run(db_typ='mysql', include_geom=True)
-    
+    # run(db_typ='mysql', include_geom=False)
+
     sys.stdout = old_stdout
-    bad_row_file = open(FILENAME_LOG_INVALID_DATAROWS,"w")
+
+    raw_row_file = open(FILENAME_LOG_RAW_DATAROWS, "w")
+    raw_row_file.write(DATA_LOG_RAW_DATAROWS)
+    raw_row_file.close()
+
+    bad_row_file = open(FILENAME_LOG_INVALID_DATAROWS, "w")
     bad_row_file.write(DATA_LOG_INVALID_DATAROWS)
     bad_row_file.close()
 

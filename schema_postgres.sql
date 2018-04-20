@@ -103,6 +103,6 @@ CREATE TABLE to_planning_app (
   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
   lastUpdated  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   geom geography(POINT,4326),
-  PRIMARY KEY (folderYear,folderSequence,folderSection,folderRevision,folderType, folderRsn, app_typ)
+  PRIMARY KEY (folderYear,folderSequence,folderSection,folderRevision,folderType)
 );
 
