@@ -14,6 +14,8 @@ To get the raw data for all wards:
 
 `python scraper.py`
 
+Note: If scraper refuses to complete all downloads, get a new session id from the City's development project applications website. Also, for new downloads, the data folder must be cleared otherwise data will not be updated. If download stucks or get interrupted, simply run the scraper again and pick up where you left off.
+
 To parse that data and insert it into a database:
 
 `pip install ppygis`
@@ -39,5 +41,6 @@ Make sure you comment out the database type you want for parse.py. (Line 386 or 
 Or run both those things together with
 
 `python run.py`
+
 
 

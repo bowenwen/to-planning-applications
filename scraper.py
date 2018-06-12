@@ -15,7 +15,7 @@ apptyps = ["0","1","2"]
 
 request_url = "http://app.toronto.ca/DevelopmentApplications/dwr/call/plaincall/MapSearchService.searchApplications.dwr"
 
-session_id = 'AD485EE3CA6FA7518C3A5501AFF5AAA6911'
+session_id = 'C2D208C41072BB20056AB596707CA28F165'
 
 # add 'c0-param1':'string:WARDCODE' and 'scriptSessionId':session_id 
 # for a full payload
@@ -46,34 +46,40 @@ payload = {
 
 
 def download_request(wardcode,apptyp):
+  filepath = os.path.join(DATA_PATH, "{0}_{1}".format(wardcode,apptyp))
 
-  f = open(os.path.join(DATA_PATH, "{0}_{1}".format(wardcode,apptyp)), 'w')
+  if os.path.exists(filepath):
+        print("{0}_{1}...".format(wardcode,apptyp)),
+        sys.stdout.flush()
+        print "already exists."
+  else:
+        f = open(filepath, 'w')
 
-  # add the desired wardcode to the payload
-  payload["c0-param1"] = "string:" + wardcode
+        # add the desired wardcode to the payload
+        payload["c0-param1"] = "string:" + wardcode
 
-  # add the desired app type to the payload
-  payload["c0-param12"] = "string:" + apptyp
+        # add the desired app type to the payload
+        payload["c0-param12"] = "string:" + apptyp
 
-  # this may have to change, unclear when the session id expires
-  payload['scriptSessionId'] = session_id
+        # this may have to change, unclear when the session id expires
+        payload['scriptSessionId'] = session_id
 
-  print("{0}_{1}...".format(wardcode,apptyp)),
-  sys.stdout.flush()
+        print("{0}_{1}...".format(wardcode,apptyp)),
+        sys.stdout.flush()
 
-  # make the request and write the response to ./data/wardcode
-  r = requests.post(request_url, data=payload)
-  f.write(r.text)
-  
-  f.close()
-  r.close()
-  print "done!"
+        # make the request and write the response to ./data/wardcode
+        r = requests.post(request_url, data=payload)
+        f.write(r.text)
+        
+        f.close()
+        r.close()
+        time.sleep(5) #sleep to prevent server block
+        print "done!"
 
 
 def run():
   for ward in wardcodes:
         for app in apptyps:
-                  time.sleep(5) #sleep to prevent server block
                   download_request(ward,app)
 	
 
