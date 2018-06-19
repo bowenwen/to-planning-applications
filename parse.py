@@ -12,7 +12,7 @@ import MySQLdb
 import psycopg2
 
 # spatial data
-import ppygis  # Point
+import ppygis3  # Point
 import pyproj  # Proj, transform
 import geopy  #from geopy.geocoders import Nominatim
 
@@ -60,7 +60,7 @@ def build_all_objects():
             try:
                 keys = get_main_record_keys(big_list[-2])
             except ValueError:
-                print f + " doesn't contain valid records."
+                print(f + " doesn't contain valid records.")
                 pass
             big_list = clean(big_list)
             pointer_map = build_pointer_map(keys, big_list)
@@ -102,8 +102,8 @@ def get_main_record_keys(s):
 
 
 def clean(big_list):
-    return map(str.strip,
-               big_list)[:-2]  # we don't need the last two items in the file
+    return list(map(str.strip,
+               big_list))[:-2]  # we don't need the last two items in the file
 
 
 def build_pointer_map(keys, big_list):
@@ -176,9 +176,9 @@ def build_objects(keys, big_list, pointer_map):
 
 def print_objects(objects):
     for key in objects:
-        print key
+        print(key)
         for k, v in objects[key].iteritems():
-            print k + ": " + v
+            print(k + ": " + v)
         print
 
 
@@ -298,7 +298,7 @@ def pgsql_add_row(cursor, tablename, rowdict, includegeom):
             return  # continue to next row
 
         # insert into database
-        coordinate = ppygis.Point(x2, y2)  # longitude, latitude
+        coordinate = ppygis3.Point(x2, y2)  # longitude, latitude
         coordinate.srid = 4326  #SRID_WGS84
         values_withgeom = values + (coordinate, )
         try:
@@ -380,9 +380,9 @@ def run(db_typ='postgres', include_geom=True):
                 # DUPLICATE_COUNT+=1
                 except:
                     e = sys.exc_info()[0]
-                    print e
+                    print(e)
                     traceback.print_exc()
-                    print row
+                    print(row)
                     sys.exit(0)
 
     print("=== Summary ===\nDuplicate Records: %s\nBad Records: %s\nNew Records: %s" %
@@ -411,3 +411,5 @@ if __name__ == "__main__":
     bad_row_file.close()
 
     log_file.close()
+
+    print('Parser done.')

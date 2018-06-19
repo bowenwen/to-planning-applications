@@ -51,7 +51,7 @@ def download_request(wardcode,apptyp):
   if os.path.exists(filepath):
         print("{0}_{1}...".format(wardcode,apptyp)),
         sys.stdout.flush()
-        print "already exists."
+        print("already exists.")
   else:
         f = open(filepath, 'w')
 
@@ -74,7 +74,7 @@ def download_request(wardcode,apptyp):
         f.close()
         r.close()
         time.sleep(5) #sleep to prevent server block
-        print "done!"
+        print("done!")
 
 
 def run():
@@ -85,3 +85,4 @@ def run():
 
 if __name__ == "__main__":
   run()
+  print('Scraper done.')
